@@ -14,6 +14,7 @@ from goprocam import GoProCamera, constants
 # constants
 AP_MAC_KEY = 'ap_mac'
 GOPRO_WIFI_SSID = 'go_dg_pro'
+WIFI_INTERFACE_NAME = 'Wi-Fi'
 
 # globals
 DEBUG = True
@@ -40,6 +41,14 @@ def connect_gopro_wifi():
     else:
         if DEBUG:
             print("already connected to gopro wifi")
+
+def disconnect_network_interface(interface_name = None):
+    interface_param = 'interface={}'.format(interface_name)
+    params = ['netsh', 'wlan', 'disconnect']
+    if interface_name != None:
+        params.append(interface_param)
+    result = subprocess.call(params)
+    print(result)
 
 def open_camera_connection():
     global GOPRO_CAM, IS_CAMERA_CONNECTED, AP_MAC_VALUE
@@ -88,6 +97,10 @@ def video_test():
 def main(argv):
     if len(argv) == 2 and ( argv[1] == '-h' or argv == '--help' ):
         show_usage()
+    elif len(argv) == 2 and argv[1] == '--connect':
+        connect_gopro_wifi()
+    elif len(argv) == 2 and argv[1] == '--disconnect':
+        disconnect_network_interface(WIFI_INTERFACE_NAME)
     else:
         try:
             video_test()
